@@ -1,62 +1,35 @@
-import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import AuthForm from "./components/AuthForm";
-import HomePage from "./components/HomePage";
-import EditProfileUrl from "./components/EditProfileUrl";
-import "./index.css";
-import FriendsListPage from "./components/FriendsListPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem("token"); 
+  return token ? children : <Navigate to="/" replace />;
+};
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-  };
-
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthForm />} />
-        <Route
-          path="/home"
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+       <Route
+          path="/dashboard"
           element={
-            isAuthenticated ? (
-              <HomePage onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/" replace />
-            )
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
           }
         />
-        <Route
-          path="/editProfileUrl"
-          element={
-            isAuthenticated ? (
-              <EditProfileUrl onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-        <Route
-          path="/friends"
-          element={
-            isAuthenticated ? <FriendsListPage /> : <Navigate to="/" replace />
-          }
-        />{" "}
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

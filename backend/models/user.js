@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String }, // Password can be optional if they sign up with Google only
-  profileUrl: { type: String },
-  googleId: { type: String, unique: true }, // Add googleId to store the Google user's unique ID
-});
+const UserSchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["admin", "member"], default: "member" },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", UserSchema);
